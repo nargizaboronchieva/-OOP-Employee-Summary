@@ -14,14 +14,14 @@ const theTeamMembers = [];
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
-
+//ask the user to chose employee type 
 const employeePrompt = {
   type: 'list',
   name: 'newEmployee',
   message: 'Which type of employee would you like to add?',
   choices: ['Manager', 'Engineer', 'Intern'],
 };
-
+//this array gives common questions for all employees 
 const commonInputs = ([
     {
         type: 'input',
@@ -40,6 +40,7 @@ const commonInputs = ([
     }
 ]);
 
+// when user selects Manager from employeePrompt , the user is presented with this questions 
 const managerQuestions = () => {
     const managerSpecificPrompt = {
         type: 'input',
@@ -52,6 +53,7 @@ const managerQuestions = () => {
     return managerPrompts;
 };
 
+// when user selects Engineer from employeePrompt , the user is presented with this questions 
 const engineerQuestions = () => {
     const engineerSpecificPrompt = {
         type: 'input',
@@ -64,6 +66,7 @@ const engineerQuestions = () => {
     return engineerPrompts;
 };
 
+// when user selects intern  from employeePrompt , the user is presented with this questions 
 const internQuestions = () => {
     const internSpecificPrompt = {
         type: 'input',
@@ -75,7 +78,7 @@ const internQuestions = () => {
     console.log(`The intern questions are ${legibleInternPrompts}`);
     return internPrompts;
 };
-
+//ask the user if the want to add more employee
 function addMorePrompt(){
     inquirer.prompt({
         type: 'confirm',
@@ -86,14 +89,19 @@ function addMorePrompt(){
             main();
         }else{
             console.log('See you again! Thank you for using our system!');
+            return render(employees);
         }
     });
 };
 
+
+
+// main page
 function main() {
   console.log('LET ME HELP YOU TO GENERATE EMPLOYEE SUMMARY');
   selectEmployee();
 };
+//function asking to select employee
 
 function selectEmployee() {
   inquirer.prompt(employeePrompt).then((answers) => {
@@ -110,7 +118,7 @@ function selectEmployee() {
     }
   });
 };
-
+//function to create new manager
 function newManager() {
     inquirer.prompt(managerQuestions()).then((answers) => {
       const newManager = new Manager(answers.newName, answers.newID, answers.newEmail, answers.newManagerOfficeNumber);
@@ -122,7 +130,7 @@ function newManager() {
       return newManager;
     }).then(addMorePrompt);;
   };
-
+//function to create new engineer
 function newEngineer() {
   inquirer.prompt(engineerQuestions()).then((answers) => {
     const newEngineer = new Engineer(answers.newName, answers.newID, answers.newEmail, answers.newEngineerGitHub);
@@ -134,7 +142,7 @@ function newEngineer() {
     return newEngineer;
   }).then(addMorePrompt);
 };
-
+//function to create new intern 
 function newIntern() {
     inquirer.prompt(internQuestions()).then((answers) => {
       const newIntern = new Intern(answers.newName, answers.newID, answers.newEmail, answers.newInternSchool);
