@@ -21,12 +21,21 @@ const employeePrompt = {
   message: 'Which type of employee would you like to add?',
   choices: ['Manager', 'Engineer', 'Intern'],
 };
-//this array gives common questions for all employees 
+//this array gives common questions for all employees , including name validation 
 const commonInputs = ([
     {
         type: 'input',
         name: 'newName',
-        message: 'what is the name of employee you are going to add.'
+        message: 'what is the name of employee you are going to add.',
+        validate: function(value) {
+            let pass = value.match(
+                /^[a-zA-Z ]{2,50}$/
+            );
+            if (pass){
+                return true;
+            }
+            return 'Please enter a valid name (between 2 - 50 characters, no numbers or symbols).'
+        },
     },
     {
         type: 'input',
