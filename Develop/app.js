@@ -1,68 +1,109 @@
-const Employee = require("./lib/Employee");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquirer = require("inquirer");
 const path = require("path");
 const fs = require("fs");
-const OUTPUT_DIR = path.resolve(__dirname, "output");
-const outputPath = path.join(OUTPUT_DIR, "team.html");
+
+//const OUTPUT_DIR = path.resolve(__dirname, "output"); //Trying to figure out how to create the directory along with the file...
+const outputPath = path.join('output', "team.html");
 
 const render = require("./lib/htmlRenderer");
+//Array to store employees as they are created
+const employees = [];
 
-const theTeamMembers = [];
-
-// Write code to use inquirer to gather information about the development team members,
-// and to create objects for each team member (using the correct classes as blueprints!)
-//ask the user to chose employee type 
-const employeePrompt = {
-  type: 'list',
-  name: 'newEmployee',
-  message: 'Which type of employee would you like to add?',
-  choices: ['Manager', 'Engineer', 'Intern'],
+// INQUIRER: Hierarchical inquirer prompt functions
+//Welcome message and prompt initiation
+function main() {
+    console.log('Welcome to your Employee Summary Generator.');
+    selectEmployee();
 };
-//this array gives common questions for all employees , including name validation 
+
+//First ask the user which type of employee they will be creating
+const employeePrompt = {
+    type: 'rawlist',
+    name: 'newEmployee',
+    message: 'Which type of employee would you like to add?',
+    choices: ['Manager', 'Engineer', 'Intern'],
+};
+
+//Based on the user's answer to the employeePrompt, ask the set of questions associated
+//with the type of employee they will be adding
+function selectEmployee() {
+    inquirer.prompt(employeePrompt).then((answers) => {
+        if (answers.newEmployee === 'Manager') {
+            console.log('Great. We will create  a Manager.');
+            newManager();
+        } else if (answers.newEmployee === 'Engineer') {
+            console.log('Great! we will create an Engineer.');
+            newEngineer();
+        } else {
+            console.log('Great! we will create an Intern.');
+            newIntern();
+        }
+    });
+};
+
+//Array containing questions common to all employees
 const commonInputs = ([
     {
         type: 'input',
-        name: 'newName',
-        message: 'what is the name of employee you are going to add.',
-        validate: function(value) {
+        name: 'What is the name of employee you are going to add?',
+        validate: function (value) {
             let pass = value.match(
-                /^[a-zA-Z ]{2,50}$/
+                /^[A-Za-z][A-Za-z\'\-]+([\ A-Za-z][A-Za-z\'\-]+)*/
             );
-            if (pass){
+            if (pass) {
                 return true;
             }
-            return 'Please enter a valid name (between 2 - 50 characters, no numbers or symbols).'
+            return 'Please enter a valid name. (You may not use numbers or any special characters besides . ,  \' , or - .'
         },
     },
     {
         type: 'input',
         name: 'newID',
-        message: 'Please enter Employee Id you are adding.'
+        message: 'Please enter Employee Id you are adding.',
+        validate: function (value) {
+            var valid = !isNaN(parseFloat(value));
+            return valid || 'Please enter a number';
+          },
     },
     {
         type: 'input',
         name: 'newEmail',
-        message: 'Please add email for Employee you are adding.'
+        message: 'Please add email for Employee you are adding.',
+        validate: function (value) {
+            let pass = value.match(
+                /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
+            );
+            if (pass) {
+                return true;
+            }
+            return 'Please enter a valid email address.'
+        },
     }
 ]);
 
-// when user selects Manager from employeePrompt , the user is presented with this questions 
+//When Manager is selected from the employeePrompt, the user is presented with these questions.
 const managerQuestions = () => {
     const managerSpecificPrompt = {
         type: 'input',
         name: 'newManagerOfficeNumber',
-        message: 'Please enter engineer office phone number',
+        message: 'Please enter manager office phone number',
     };
     const managerPrompts = commonInputs.concat(managerSpecificPrompt);
-    let legibleMgrPrompts = JSON.stringify(managerPrompts);
-    console.log(`The manager questions are ${legibleMgrPrompts}`);
     return managerPrompts;
 };
+//Generate a new Manager instance based on user input and push to employee array
+function newManager() {
+    inquirer.prompt(managerQuestions()).then((answers) => {
+        const newManager = new Manager(answers.newName, answers.newID, answers.newEmail, answers.newManagerOfficeNumber);
+        employees.push(newManager);
+        return newManager;
+    }).then(addMorePrompt);//ask user if they would like to add another employee
+};
 
-// when user selects Engineer from employeePrompt , the user is presented with this questions 
+//When Engineer is selected from the employeePrompt, the user is presented with these questions.
 const engineerQuestions = () => {
     const engineerSpecificPrompt = {
         type: 'input',
@@ -70,12 +111,18 @@ const engineerQuestions = () => {
         message: 'Please enter the GitHub username for the Engineer you are adding.',
     };
     const engineerPrompts = commonInputs.concat(engineerSpecificPrompt);
-    let legibleEngineerPrompts = JSON.stringify(engineerPrompts);
-    console.log(`The engineer questions are ${legibleEngineerPrompts}`);
     return engineerPrompts;
 };
+//Generate a new Engineer instance based on user input and push to employee array
+function newEngineer() {
+    inquirer.prompt(engineerQuestions()).then((answers) => {
+        const newEngineer = new Engineer(answers.newName, answers.newID, answers.newEmail, answers.newEngineerGitHub);
+        employees.push(newEngineer);
+        //return newEngineer;
+    }).then(addMorePrompt); //ask user if they would like to add another employee
+};
 
-// when user selects intern  from employeePrompt , the user is presented with this questions 
+//When Intern is selected from the employeePrompt, the user is presented with these questions.
 const internQuestions = () => {
     const internSpecificPrompt = {
         type: 'input',
@@ -83,104 +130,52 @@ const internQuestions = () => {
         message: 'Please give the name of  the school for the Intern we are creating .',
     };
     const internPrompts = commonInputs.concat(internSpecificPrompt);
-    let legibleInternPrompts = JSON.stringify(internPrompts);
-    console.log(`The intern questions are ${legibleInternPrompts}`);
     return internPrompts;
 };
-//ask the user if the want to add more employee
-function addMorePrompt(){
+//Generate a new Intern instance based on user input and push to employee array
+function newIntern() {
+    inquirer.prompt(internQuestions()).then((answers) => {
+        const newIntern = new Intern(answers.newName, answers.newID, answers.newEmail, answers.newInternSchool);
+        employees.push(newIntern);
+        //return newIntern;
+    }).then(addMorePrompt); //ask user if they would like to add another employee
+};
+
+//Asks the user if they want to add another employee after each entry
+function addMorePrompt() {
     inquirer.prompt({
         type: 'confirm',
         name: 'addAnotherEmployee',
-        message: 'Do you want to add another employee?'
+        message: 'Would you like to add another employee?'
     }).then(answers => {
-        if(answers.addAnotherEmployee){
-            main();
-        }else{
-            console.log('See you again! Thank you for using our system!');
-            return render(employees);
-        }
+        if (answers.addAnotherEmployee) {
+            selectEmployee();
+        } else {
+            console.log('Thank you. See you next time. Remember: Teamwork makes the dream work!');
+            //When the user has finished entering all team members, call a function to render
+            //the HTML and generate the team page
+            outputTeamHTML(employees);
+
+        };
     });
 };
+//end inquirer prompt functions
 
-
-
-// main page
-function main() {
-  console.log('LET ME HELP YOU TO GENERATE EMPLOYEE SUMMARY');
-  selectEmployee();
+// Generate and write the rendered HTML to a file named `team.html` in the `output` folder.
+const outputTeamHTML = async (employees) => {
+    try {
+        const employeeHTML = await render(employees);
+        fs.writeFile(outputPath, employeeHTML, (err) => {
+            if (err) {
+                throw err;
+            } else {
+                console.log('Success! Your team page has been generated.');
+            }
+        } 
+        )}catch (error) {
+                throw error;
+        };
 };
-//function asking to select employee
-
-function selectEmployee() {
-  inquirer.prompt(employeePrompt).then((answers) => {
-    if (answers.newEmployee === 'Manager') {
-      console.log('Wonderful! We are going to create a Manager.');
-      managerQuestions();
-      newManager(managerQuestions);
-    } else if (answers.newEmployee === 'Engineer') {
-      console.log('Wonderful! We are going to create an Engineer.');
-      newEngineer();
-    } else {
-      console.log('Wonderful! We are going to create an Intern.');
-      newIntern();
-    }
-  });
-};
-//function to create new manager
-function newManager() {
-    inquirer.prompt(managerQuestions()).then((answers) => {
-      const newManager = new Manager(answers.newName, answers.newID, answers.newEmail, answers.newManagerOfficeNumber);
-      theTeamMembers.push(newManager);
-      let legibleArray = JSON.stringify(theTeamMembers);
-      console.log(`The team members array so far = ${legibleArray}`);
-      let legibleMgrAdded = JSON.stringify(newManager);
-      console.log(`The new manager = ${legibleMgrAdded}`);
-      return newManager;
-    }).then(addMorePrompt);;
-  };
-//function to create new engineer
-function newEngineer() {
-  inquirer.prompt(engineerQuestions()).then((answers) => {
-    const newEngineer = new Engineer(answers.newName, answers.newID, answers.newEmail, answers.newEngineerGitHub);
-    theTeamMembers.push(newEngineer);
-    let legibleArray = JSON.stringify(theTeamMembers);
-    console.log(`The team members array so far = ${legibleArray}`);
-    let legibleEngineerAdded = JSON.stringify(newEngineer);
-    console.log(`The new engineer = ${legibleEngineerAdded}`);
-    return newEngineer;
-  }).then(addMorePrompt);
-};
-//function to create new intern 
-function newIntern() {
-    inquirer.prompt(internQuestions()).then((answers) => {
-      const newIntern = new Intern(answers.newName, answers.newID, answers.newEmail, answers.newInternSchool);
-      theTeamMembers.push(newIntern);
-      let legibleArray = JSON.stringify(theTeamMembers);
-      console.log(`The team members array so far = ${legibleArray}`);
-      let legibleInternAdded = JSON.stringify(newIntern);
-      console.log(`The new intern = ${legibleInternAdded}`);
-      return newIntern;
-    }).then(addMorePrompt);;
-  };
-
-
-// After the user has input all employees desired, call the `render` function (required
-// above) and pass in an array containing all employee objects; the `render` function will
-// generate and return a block of HTML including templated divs for each employee!
-// After you have your html, you're now ready to create an HTML file using the HTML
-// returned from the `render` function. Now write it to a file named `team.html` in the
-// `output` folder. You can use the variable `outputPath` above target this location.
-// Hint: you may need to check if the `output` folder exists and create it if it
-// does not.
-// HINT: each employee type (manager, engineer, or intern) has slightly different
-// information; write your code to ask different questions via inquirer depending on
-// employee type.
-// HINT: make sure to build out your classes first! Remember that your Manager, Engineer,
-// and Intern classes should all extend from a class named Employee; see the directions
-// for further information. Be sure to test out each class and verify it generates an
-// object with the correct structure and methods. This structure will be crucial in order
-// for the provided `render` function to work! ```
 
 function init() {
     main();
