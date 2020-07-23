@@ -10,7 +10,7 @@ A Node CLI that takes in information about employees and generates an HTML webpa
 ## Demo
 **Link to screencast:** (https://drive.google.com/file/d/1-Xm1zWWCQEQjdJzfnBqdUSjBbC5qiYiZ/view)
 
-![Screencast](assets/demo.gif)
+![Image Alt Text](.assets/demo.gif)
 
 
 
