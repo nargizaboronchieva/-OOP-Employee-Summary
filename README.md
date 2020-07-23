@@ -9,9 +9,9 @@ A Node CLI that takes in information about employees and generates an HTML webpa
 [Demo](#demo) &nbsp;&nbsp;| &nbsp;&nbsp; [Installation](#installation) &nbsp;&nbsp; | &nbsp;&nbsp; [Tests](#tests) &nbsp;&nbsp; | &nbsp;&nbsp; [Usage](#useage) &nbsp;&nbsp; | &nbsp;&nbsp; [Features](#features) &nbsp;&nbsp; | &nbsp;&nbsp; [Contributing](#contributing) &nbsp;&nbsp; | &nbsp;&nbsp; [License](#license) &nbsp;&nbsp; |  &nbsp;&nbsp; [Questions](#questions)
 
 ## Demo
-**Link to screencast:** 
+**Link to screencast:** (assets/demovideo.webm)
 
-![Screencast]()
+![Screencast](assets/demo.gif)
 
 
 
