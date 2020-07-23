@@ -48,8 +48,8 @@ function selectEmployee() {
 const commonInputs = ([
     {
         type: 'input',
-        name: 'name',
-        message: 'What is the name of employee you are going to add?',
+        name: 'newName',
+        message: 'Please enter the name for the Employee you are adding.',
         validate: function (value) {
             let pass = value.match(
                 /^[A-Za-z][A-Za-z\'\-]+([\ A-Za-z][A-Za-z\'\-]+)*/
