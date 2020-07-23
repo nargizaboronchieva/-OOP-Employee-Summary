@@ -6,10 +6,9 @@ A Node CLI that takes in information about employees and generates an HTML webpa
 
 #### Table of Contents
 
-[Demo](#demo) &nbsp;&nbsp;| &nbsp;&nbsp; [Installation](#installation) &nbsp;&nbsp; | &nbsp;&nbsp; [Tests](#tests) &nbsp;&nbsp; | &nbsp;&nbsp; [Usage](#useage) &nbsp;&nbsp; | &nbsp;&nbsp; [Features](#features) &nbsp;&nbsp; | &nbsp;&nbsp; [Contributing](#contributing) &nbsp;&nbsp; | &nbsp;&nbsp; [License](#license) &nbsp;&nbsp; |  &nbsp;&nbsp; [Questions](#questions)
-
+[Demo](#demo) &nbsp;&nbsp;| &nbsp;&nbsp; [Installation](#installation) &nbsp;&nbsp; | &nbsp;&nbsp; [Tests](#tests) &nbsp;&nbsp; | &nbsp;&nbsp; [Usage](#useage) &nbsp;&nbsp; | &nbsp;&nbsp; [Features](#features) &nbsp;&nbsp; | &nbsp;&nbsp; [Contributing](#contributing) &nbsp;&nbsp; | &nbsp;&nbsp; 
 ## Demo
-**Link to screencast:** (assets/demovideo.webm)
+**Link to screencast:** (https://drive.google.com/file/d/1-Xm1zWWCQEQjdJzfnBqdUSjBbC5qiYiZ/view)
 
 ![Screencast](assets/demo.gif)
 
@@ -29,16 +28,11 @@ A Node CLI that takes in information about employees and generates an HTML webpa
 ## Usage
 - Use this app to create a clean, stylish org chart for your team with handy information and contact links.
 
-## Features
-- Validation checks for name, id, and email inputs.
+
 
 ## Contributing
 - Fork or clone the repository
 - Extend and improve the code, make it your own, make it amazing!
     - Add additional prompts and features.
     - Improve validation checks.
-- Reach out to me with your work and share your code using the email accessible by clicking the "Ask me anything" badge at the top of the page. Let's get better together!
 
-## License
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
